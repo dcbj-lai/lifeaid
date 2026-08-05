@@ -8,6 +8,9 @@ This boilerplate is a LifeOS SAML Service Provider.
 - Assertion consumer service: `POST /saml/acs`
 - Single logout: `GET|POST /saml/slo`
 - App session: `GET /api/auth/session`
+- Password login: `POST /api/auth/login`
+
+LifeOS SSO is optional and should sit alongside the app's own password authentication path.
 
 ## Register In LifeOS
 
@@ -34,4 +37,3 @@ Default attribute mappings:
 ```
 
 For non-local environments, set `LIFEOS_IDP_CERTIFICATE` from LifeOS IdP metadata and keep `SAML_REQUIRE_SIGNED_RESPONSE=true`.
-

@@ -23,6 +23,11 @@ class Settings(BaseSettings):
     saml_require_signed_response: bool = True
     saml_clock_skew_seconds: int = 120
 
+    app_auth_email: str = "admin@tenant.local"
+    app_auth_password: str = "password"
+    app_auth_name: str = "Tenant Admin"
+    app_auth_roles: str = "tenant-admin"
+
     brand_name: str = "Tenant App"
     brand_organization: str = "LifeOS Tenant"
     brand_accent: str = "#9e1d20"
@@ -67,4 +72,3 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
-

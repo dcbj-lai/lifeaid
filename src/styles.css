@@ -523,7 +523,8 @@ code {
 }
 
 .primary-button,
-.secondary-button {
+.secondary-button,
+.text-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -544,6 +545,19 @@ code {
 .secondary-button {
   background: var(--panel);
   color: var(--text);
+}
+
+.text-button {
+  border-color: transparent;
+  background: transparent;
+  color: var(--muted);
+}
+
+.primary-button:disabled,
+.secondary-button:disabled,
+.text-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
 }
 
 .definition-row {
@@ -606,6 +620,92 @@ code {
   max-width: 560px;
   color: var(--muted);
   line-height: 1.65;
+}
+
+.login-form {
+  display: grid;
+  gap: 13px;
+  margin-top: 24px;
+  max-width: 430px;
+}
+
+.login-form label {
+  display: grid;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.login-form input {
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-strong);
+  color: var(--text);
+  font-size: 14px;
+  outline: 0;
+  padding: 0 12px;
+  text-transform: none;
+}
+
+.login-form input:focus {
+  border-color: color-mix(in srgb, var(--maroon) 54%, var(--line));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--maroon) 14%, transparent);
+}
+
+.login-form .check-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 28px;
+  text-transform: none;
+}
+
+.login-form .check-row input {
+  width: 16px;
+  height: 16px;
+  min-height: 0;
+  padding: 0;
+}
+
+.login-form .primary-button {
+  width: max-content;
+}
+
+.login-error {
+  border: 1px solid color-mix(in srgb, var(--maroon) 34%, var(--line));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--maroon) 8%, var(--panel));
+  color: var(--maroon-strong);
+  font-size: 13px;
+  font-weight: 800;
+  padding: 10px 12px;
+}
+
+.login-divider {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  max-width: 430px;
+  margin-top: 22px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.login-divider::before,
+.login-divider::after {
+  height: 1px;
+  background: var(--line);
+  content: "";
+}
+
+.login-divider + .login-actions {
+  margin-top: 16px;
 }
 
 .mobile-only,
@@ -679,4 +779,3 @@ code {
     grid-column: span 1;
   }
 }
-

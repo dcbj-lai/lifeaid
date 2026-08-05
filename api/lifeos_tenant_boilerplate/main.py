@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hmac
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote
@@ -8,10 +9,19 @@ from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 
 from .config import get_settings
 from .saml import build_authn_redirect_url, build_sp_metadata, parse_and_validate_response
-from .session import COOKIE_NAME, build_session, public_session, read_session, sign_session
+from .session import (
+    COOKIE_NAME,
+    REMEMBERED_SESSION_MAX_AGE_SECONDS,
+    SESSION_MAX_AGE_SECONDS,
+    build_session,
+    public_session,
+    read_session,
+    sign_session,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 DIST_DIR = ROOT / "dist"
@@ -19,6 +29,13 @@ DOCS_DIR = ROOT / "docs"
 
 app = FastAPI(title="LifeOS Tenant Boilerplate API", version="0.1.0")
 settings = get_settings()
+
+
+class LoginPayload(BaseModel):
+    email: str
+    password: str
+    remember: bool = True
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -60,6 +77,31 @@ def auth_session(request: Request) -> dict[str, Any]:
     return public_session(read_session(request.cookies.get(COOKIE_NAME)))
 
 
+@app.post("/api/auth/login")
+def password_login(payload: LoginPayload, response: Response) -> dict[str, Any]:
+    if payload.email.strip().lower() != settings.app_auth_email.strip().lower():
+        raise HTTPException(status_code=422, detail="Invalid email or password.")
+    if not hmac.compare_digest(payload.password, settings.app_auth_password):
+        raise HTTPException(status_code=422, detail="Invalid email or password.")
+
+    session = build_session(
+        {
+            "id": f"app_user_{settings.app_auth_email.strip().lower()}",
+            "name": settings.app_auth_name,
+            "email": settings.app_auth_email.strip().lower(),
+            "tenant_id": settings.lifeos_tenant_id,
+            "tenantName": settings.brand_organization,
+            "app_id": settings.lifeos_app_id,
+            "roles": settings.app_auth_roles,
+            "app_entitlements": [settings.lifeos_app_id],
+            "authProvider": "password",
+        },
+        ttl_seconds=REMEMBERED_SESSION_MAX_AGE_SECONDS if payload.remember else SESSION_MAX_AGE_SECONDS,
+    )
+    set_session_cookie(response, session)
+    return public_session(session)
+
+
 @app.post("/api/auth/dev-login")
 def dev_login(response: Response) -> dict[str, Any]:
     if settings.app_env != "local":
@@ -74,6 +116,7 @@ def dev_login(response: Response) -> dict[str, Any]:
             "app_id": settings.lifeos_app_id,
             "roles": ["tenant-admin"],
             "app_entitlements": [settings.lifeos_app_id],
+            "authProvider": "local_dev",
         }
     )
     set_session_cookie(response, session)
@@ -114,6 +157,12 @@ def navigation(request: Request) -> dict[str, Any]:
 @app.get("/api/dashboard")
 def dashboard(request: Request) -> dict[str, Any]:
     session = require_app_session(request)
+    auth_provider = session.get("auth", {}).get("provider")
+    auth_label = {
+        "lifeos_saml": "LifeOS SAML",
+        "password": "password",
+        "local_dev": "local development",
+    }.get(auth_provider, "tenant")
     return {
         "summary": [
             {"label": "Open items", "value": "24", "detail": "Replace with tenant workflow data"},
@@ -121,7 +170,7 @@ def dashboard(request: Request) -> dict[str, Any]:
             {"label": "Active users", "value": "12", "detail": "Scoped by LifeOS tenant membership"},
         ],
         "activity": [
-            {"title": "LifeOS SAML session established", "detail": session["user"]["email"]},
+            {"title": f"{auth_label} session established", "detail": session["user"]["email"]},
             {"title": "Tenant placeholder loaded", "detail": session["tenant"]["name"]},
             {"title": "Navigation ready", "detail": "Swap these routes for your product areas"},
         ],
@@ -176,7 +225,7 @@ def set_session_cookie(response: Response, session: dict[str, Any]) -> None:
         httponly=True,
         secure=settings.app_env != "local",
         samesite="lax",
-        max_age=8 * 60 * 60,
+        max_age=REMEMBERED_SESSION_MAX_AGE_SECONDS,
     )
 
 
@@ -203,4 +252,3 @@ def frontend(path: str) -> Response:
     if index.exists():
         return FileResponse(index)
     return JSONResponse({"message": "LifeOS Tenant Boilerplate API is running. Start Vite or build the frontend."})
-

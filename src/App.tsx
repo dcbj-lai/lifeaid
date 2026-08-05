@@ -17,7 +17,7 @@ import {
   Workflow,
   X,
 } from 'lucide-react';
-import type { ComponentType, CSSProperties, ReactNode } from 'react';
+import type { ComponentType, CSSProperties, FormEvent, ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 
 interface Branding {
@@ -47,6 +47,9 @@ interface AppSession {
     id: string;
     name: string;
     appId: string;
+  } | null;
+  auth?: {
+    provider: string;
   } | null;
 }
 
@@ -157,6 +160,21 @@ export default function App() {
     navigate('/dashboard');
   }
 
+  async function handlePasswordLogin(credentials: { email: string; password: string; remember: boolean }) {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(credentials),
+    });
+    if (!response.ok) throw new Error('Invalid email or password.');
+    setSession(await response.json());
+    navigate('/dashboard');
+  }
+
   async function handleLogout() {
     await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => null);
     setSession(signedOutSession);
@@ -177,6 +195,7 @@ export default function App() {
     return (
       <LoginScreen
         branding={branding}
+        onPasswordLogin={handlePasswordLogin}
         onDevLogin={handleDevLogin}
         darkMode={darkMode}
         onToggleDarkMode={() => setDarkMode((current) => !current)}
@@ -282,7 +301,7 @@ function Sidebar({
       </nav>
       <div className="sidebar-footer">
         <ShieldCheck size={17} />
-        <span>Authenticated by LifeOS SAML</span>
+        <span>Tenant access enabled</span>
       </div>
     </aside>
   );
@@ -306,13 +325,35 @@ function LoginScreen({
   branding,
   darkMode,
   onToggleDarkMode,
+  onPasswordLogin,
   onDevLogin,
 }: {
   branding: Branding;
   darkMode: boolean;
   onToggleDarkMode: () => void;
+  onPasswordLogin: (credentials: { email: string; password: string; remember: boolean }) => Promise<void>;
   onDevLogin: () => void;
 }) {
+  const [email, setEmail] = useState('admin@tenant.local');
+  const [password, setPassword] = useState('password');
+  const [remember, setRemember] = useState(true);
+  const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError('');
+    setSubmitting(true);
+
+    try {
+      await onPasswordLogin({ email, password, remember });
+    } catch {
+      setError('Unable to sign in with those credentials.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
     <main className={`signed-out ${darkMode ? 'dark' : ''}`} style={{ '--brand-accent': branding.accent } as CSSProperties}>
       <section className="login-panel" aria-label="Tenant sign in">
@@ -323,16 +364,38 @@ function LoginScreen({
           </button>
         </div>
         <div className="login-copy">
-          <span className="eyebrow">LifeOS tenant application</span>
+          <span className="eyebrow">Tenant application</span>
           <h1>{branding.appName}</h1>
-          <p>Use LifeOS SAML to authenticate users, scope them to a tenant, and then replace the placeholder modules with your product workflow.</p>
+          <p>Sign in to continue.</p>
+        </div>
+        <form className="login-form" onSubmit={submit}>
+          <label>
+            Email
+            <input value={email} type="email" autoComplete="email" onChange={(event) => setEmail(event.target.value)} />
+          </label>
+          <label>
+            Password
+            <input value={password} type="password" autoComplete="current-password" onChange={(event) => setPassword(event.target.value)} />
+          </label>
+          <label className="check-row">
+            <input checked={remember} type="checkbox" onChange={(event) => setRemember(event.target.checked)} />
+            Keep me signed in
+          </label>
+          {error ? <div className="login-error">{error}</div> : null}
+          <button className="primary-button" type="submit" disabled={submitting}>
+            <LogIn size={18} />
+            {submitting ? 'Signing in...' : 'Sign in'}
+          </button>
+        </form>
+        <div className="login-divider">
+          <span>or</span>
         </div>
         <div className="login-actions">
-          <a className="primary-button" href="/api/auth/saml/login?RelayState=/dashboard">
+          <a className="secondary-button" href="/api/auth/saml/login?RelayState=/dashboard">
             <LockKeyhole size={18} />
             Continue with LifeOS
           </a>
-          <button className="secondary-button" type="button" onClick={onDevLogin}>
+          <button className="text-button" type="button" onClick={onDevLogin}>
             <LogIn size={18} />
             Local dev sign in
           </button>
@@ -386,6 +449,7 @@ function DashboardView({ branding, session, dashboard }: { branding: Branding; s
           <code>/saml/acs</code>
           <code>/saml/slo</code>
           <code>/api/auth/session</code>
+          <code>/api/auth/login</code>
         </div>
       </Panel>
     </div>
@@ -476,4 +540,3 @@ function normalizePath(path: string): string {
   if (!path || path === '/' || path === '/login') return '/dashboard';
   return path.startsWith('/') ? path : `/${path}`;
 }
-

@@ -5,8 +5,10 @@ Clone-ready starter for a LifeOS tenant application. It uses the same broad stac
 ## What Is Included
 
 - LifeOS-styled tenant shell with sidebar navigation, topbar actions, user chip, dark mode, and placeholder modules.
+- Normal password authentication for the tenant app.
+- Optional LifeOS SSO sign-in alongside password authentication.
 - SAML Service Provider endpoints: `/saml/metadata`, `/saml/acs`, and `/saml/slo`.
-- Signed app session cookie created after LifeOS SAML authentication.
+- Signed app session cookie created after password or LifeOS SAML authentication.
 - Local development sign-in for `APP_ENV=local`.
 - Dockerfile and `docker-compose.yml` for quick clone and local deploy.
 
@@ -28,6 +30,12 @@ pnpm api
 ```
 
 Open `http://127.0.0.1:5175`.
+
+Default local password login:
+
+```text
+admin@tenant.local / password
+```
 
 ## Docker
 
@@ -52,4 +60,3 @@ SLO URL: http://127.0.0.1:8002/saml/slo
 ```
 
 Then set `LIFEOS_IDP_CERTIFICATE` for environments where signed SAML validation must be enforced.
-
