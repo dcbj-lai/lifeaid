@@ -74,6 +74,7 @@ const icons = {
   Database,
   LayoutDashboard,
   Settings,
+  ShieldCheck,
   Users,
   Workflow,
 };
@@ -104,6 +105,7 @@ const routeTitles: Record<string, string> = {
   '/workflow': 'Workflow',
   '/people': 'People',
   '/reports': 'Reports',
+  '/saml-setup': 'SAML Setup',
   '/settings': 'Settings',
 };
 
@@ -237,6 +239,8 @@ export default function App() {
         <main className="content">
           {activePath === '/dashboard' ? (
             <DashboardView branding={branding} session={session} dashboard={dashboard} />
+          ) : activePath === '/saml-setup' ? (
+            <SamlSetupView branding={branding} />
           ) : activePath === '/settings' ? (
             <SettingsView branding={branding} />
           ) : (
@@ -474,15 +478,78 @@ function PlaceholderView({ title, path }: { title: string; path: string }) {
   );
 }
 
+function SamlSetupView({ branding }: { branding: Branding }) {
+  const registrationRows = [
+    { label: 'App ID', value: branding.appId },
+    { label: 'Tenant ID', value: branding.tenantId },
+    { label: 'SP Entity ID', value: branding.spEntityId },
+    { label: 'ACS URL', value: branding.acsUrl },
+    { label: 'SLO URL', value: branding.sloUrl },
+  ];
+  const lifeosRows = [
+    { label: 'LifeOS URL', value: branding.lifeosUrl },
+    { label: 'IdP Metadata', value: branding.idpMetadataUrl },
+    { label: 'IdP SSO URL', value: `${branding.lifeosUrl}/saml/sso` },
+    { label: 'IdP SLO URL', value: `${branding.lifeosUrl}/saml/slo` },
+  ];
+
+  return (
+    <div className="saml-setup">
+      <section className="setup-hero">
+        <div>
+          <span className="eyebrow">LifeOS tenant SSO</span>
+          <h2>SAML Setup</h2>
+          <p>Use this service-provider profile when registering the tenant app in LifeOS. Password sign-in remains available; LifeOS SSO is an additional authentication option.</p>
+        </div>
+        <a className="primary-button" href="/saml/metadata" target="_blank" rel="noreferrer">
+          <ShieldCheck size={18} />
+          View SP Metadata
+        </a>
+      </section>
+
+      <div className="setup-grid">
+        <Panel title="Register This App In LifeOS" icon={ShieldCheck}>
+          <div className="definition-stack">
+            {registrationRows.map((row) => (
+              <Definition key={row.label} label={row.label} value={row.value} />
+            ))}
+          </div>
+        </Panel>
+
+        <Panel title="LifeOS Identity Provider" icon={LockKeyhole}>
+          <div className="definition-stack">
+            {lifeosRows.map((row) => (
+              <Definition key={row.label} label={row.label} value={row.value} />
+            ))}
+          </div>
+        </Panel>
+
+        <Panel title="Expected Claims" icon={Users}>
+          <div className="claim-grid">
+            <Definition label="email" value="User email address" />
+            <Definition label="name" value="Display name" />
+            <Definition label="tenant_id" value="LifeOS tenant identifier" />
+            <Definition label="roles" value="Comma-separated tenant roles" />
+            <Definition label="app_entitlements" value="Includes this app ID" />
+          </div>
+        </Panel>
+
+        <Panel title="Local Rehearsal Checklist" icon={Workflow}>
+          <ol className="setup-list">
+            <li>Clone the boilerplate and configure `.env` from `.env.example`.</li>
+            <li>Run `docker compose up --build` and open the tenant app.</li>
+            <li>Register the app in LifeOS using the service-provider values above.</li>
+            <li>Use password sign-in for local access or Continue with LifeOS for SSO.</li>
+          </ol>
+        </Panel>
+      </div>
+    </div>
+  );
+}
+
 function SettingsView({ branding }: { branding: Branding }) {
   return (
     <div className="settings-grid">
-      <Panel title="LifeOS SAML" icon={ShieldCheck}>
-        <Definition label="SP Entity ID" value={branding.spEntityId} />
-        <Definition label="ACS URL" value={branding.acsUrl} />
-        <Definition label="SLO URL" value={branding.sloUrl} />
-        <Definition label="IdP Metadata" value={branding.idpMetadataUrl} />
-      </Panel>
       <Panel title="Branding" icon={Settings}>
         <Definition label="App Name" value={branding.appName} />
         <Definition label="Brand" value={branding.brandName} />

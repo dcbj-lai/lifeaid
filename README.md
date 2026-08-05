@@ -7,6 +7,7 @@ Clone-ready starter for a LifeOS tenant application. It uses the same broad stac
 - LifeOS-styled tenant shell with sidebar navigation, topbar actions, user chip, dark mode, and placeholder modules.
 - Normal password authentication for the tenant app.
 - Optional LifeOS SSO sign-in alongside password authentication.
+- In-app SAML setup view at `/saml-setup` with SP, IdP, claim, and rehearsal details.
 - SAML Service Provider endpoints: `/saml/metadata`, `/saml/acs`, and `/saml/slo`.
 - Signed app session cookie created after password or LifeOS SAML authentication.
 - Local development sign-in for `APP_ENV=local`.
@@ -49,6 +50,8 @@ Open `http://127.0.0.1:8002`.
 ## LifeOS Registration
 
 See [docs/LIFEOS_SAML_SETUP.md](/Users/donbalbieran/Documents/lifeos-tenant-boilerplate/docs/LIFEOS_SAML_SETUP.md).
+
+After signing in, open `SAML Setup` in the tenant navigation to view the same registration values inside the app shell.
 
 At minimum, configure this app in LifeOS with:
 

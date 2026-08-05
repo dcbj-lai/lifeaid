@@ -2,6 +2,8 @@
 
 This boilerplate is a LifeOS SAML Service Provider.
 
+The tenant app also includes a matching `SAML Setup` navigation view at `/saml-setup` after sign-in.
+
 ## App Endpoints
 
 - SP metadata: `GET /saml/metadata`

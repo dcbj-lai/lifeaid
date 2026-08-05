@@ -353,13 +353,15 @@ a {
 }
 
 .dashboard-grid,
-.settings-grid {
+.settings-grid,
+.setup-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
 }
 
-.report-hero {
+.report-hero,
+.setup-hero {
   grid-column: 1 / -1;
   display: flex;
   align-items: end;
@@ -376,6 +378,7 @@ a {
 }
 
 .report-hero h2,
+.setup-hero h2,
 .placeholder-panel h2 {
   margin: 6px 0 10px;
   font-family: "Crimson Pro", Georgia, "Times New Roman", serif;
@@ -384,6 +387,7 @@ a {
 }
 
 .report-hero p,
+.setup-hero p,
 .placeholder-panel p {
   max-width: 650px;
   margin: 0;
@@ -446,6 +450,45 @@ a {
   grid-column: span 2;
   min-height: 260px;
   padding: 18px;
+}
+
+.saml-setup {
+  display: grid;
+  gap: 18px;
+}
+
+.setup-hero {
+  min-height: 190px;
+}
+
+.setup-hero .primary-button {
+  flex: 0 0 auto;
+}
+
+.definition-stack,
+.claim-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.definition-stack .definition-row,
+.claim-grid .definition-row {
+  margin-bottom: 0;
+}
+
+.setup-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+  padding-left: 20px;
+}
+
+.setup-list li::marker {
+  color: var(--maroon-strong);
+  font-weight: 900;
 }
 
 .panel-header {
@@ -761,11 +804,13 @@ code {
   }
 
   .dashboard-grid,
-  .settings-grid {
+  .settings-grid,
+  .setup-grid {
     grid-template-columns: 1fr;
   }
 
-  .report-hero {
+  .report-hero,
+  .setup-hero {
     align-items: start;
     flex-direction: column;
   }

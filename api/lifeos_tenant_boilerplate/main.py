@@ -147,6 +147,7 @@ def navigation(request: Request) -> dict[str, Any]:
                 "items": [
                     {"label": "People", "path": "/people", "icon": "Users"},
                     {"label": "Reports", "path": "/reports", "icon": "ChartColumnIncreasing"},
+                    {"label": "SAML Setup", "path": "/saml-setup", "icon": "ShieldCheck"},
                     {"label": "Settings", "path": "/settings", "icon": "Settings"},
                 ],
             },
