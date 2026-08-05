@@ -1,0 +1,15 @@
+name: lifeos-tenant-boilerplate
+
+services:
+  app:
+    build:
+      context: .
+    environment:
+      APP_ENV: ${APP_ENV:-local}
+      APP_PUBLIC_URL: ${APP_PUBLIC_URL:-http://127.0.0.1:8002}
+      FRONTEND_URL: ${FRONTEND_URL:-http://127.0.0.1:8002}
+      LIFEOS_PUBLIC_URL: ${LIFEOS_PUBLIC_URL:-http://127.0.0.1:5174}
+      LIFEOS_TENANT_ID: ${LIFEOS_TENANT_ID:-tenant-boilerplate}
+      LIFEOS_APP_ID: ${LIFEOS_APP_ID:-tenant-boilerplate}
+    ports:
+      - "127.0.0.1:8002:8002"

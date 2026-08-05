@@ -1,0 +1,26 @@
+{
+  "name": "lifeos-tenant-boilerplate",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "pnpm@11.9.0",
+  "scripts": {
+    "dev": "node node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5175",
+    "api": "uvicorn lifeos_tenant_boilerplate.main:app --app-dir api --host 127.0.0.1 --port 8002 --reload",
+    "build": "tsc -b && node node_modules/vite/bin/vite.js build",
+    "preview": "node node_modules/vite/bin/vite.js preview --host 127.0.0.1 --port 4175"
+  },
+  "dependencies": {
+    "lucide-react": "0.468.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "5.0.0",
+    "typescript": "^5.7.2",
+    "vite": "7.0.7"
+  }
+}
+
