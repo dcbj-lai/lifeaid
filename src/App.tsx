@@ -341,7 +341,7 @@ function LoginScreen({
   const [email, setEmail] = useState('admin@tenant.local');
   const [password, setPassword] = useState('password');
   const [remember, setRemember] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(() => new URLSearchParams(window.location.search).get('sso_error') ?? '');
   const [submitting, setSubmitting] = useState(false);
 
   async function submit(event: FormEvent<HTMLFormElement>) {

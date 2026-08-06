@@ -1,13 +1,15 @@
 from __future__ import annotations
 
+import html
 import hmac
+import json
 from pathlib import Path
 from typing import Any
-from urllib.parse import quote
+from urllib.parse import quote, urlencode
 
 from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -196,12 +198,16 @@ async def saml_acs(request: Request) -> Response:
     try:
         claims = parse_and_validate_response(str(form.get("SAMLResponse") or ""), settings)
     except Exception as error:
-        raise HTTPException(status_code=401, detail=f"SAML sign-in failed: {error}") from error
+        message = str(error) or "LifeOS could not sign you in to this tenant app."
+        return RedirectResponse(
+            safe_frontend_redirect(f"/login?{urlencode({'sso_error': message})}"),
+            status_code=303,
+        )
 
     session = build_session(claims)
-    redirect = RedirectResponse(safe_frontend_redirect(relay_state), status_code=303)
-    set_session_cookie(redirect, session)
-    return redirect
+    response = frontend_redirect_bridge(safe_frontend_redirect(relay_state))
+    set_session_cookie(response, session)
+    return response
 
 
 @app.api_route("/saml/slo", methods=["GET", "POST"])
@@ -236,6 +242,28 @@ def safe_frontend_redirect(path_or_url: str) -> str:
     if path_or_url.startswith("/") and not path_or_url.startswith("//"):
         return f"{settings.frontend_origin}{path_or_url}"
     return f"{settings.frontend_origin}/dashboard?blocked_redirect={quote(path_or_url, safe='')}"
+
+
+def frontend_redirect_bridge(url: str) -> HTMLResponse:
+    escaped_url = html.escape(url, quote=True)
+    json_url = json.dumps(url)
+    return HTMLResponse(
+        "<!doctype html>"
+        '<html lang="en">'
+        "<head>"
+        '<meta charset="utf-8">'
+        '<meta name="viewport" content="width=device-width, initial-scale=1">'
+        f'<meta http-equiv="refresh" content="0;url={escaped_url}">'
+        f"<title>Continue to {html.escape(settings.app_name)}</title>"
+        "</head>"
+        "<body>"
+        f"<p>Continuing to {html.escape(settings.app_name)}...</p>"
+        f'<p><a href="{escaped_url}">Continue</a></p>'
+        f"<script>window.location.replace({json_url});</script>"
+        "</body>"
+        "</html>",
+        headers={"Cache-Control": "no-store, max-age=0"},
+    )
 
 
 if DOCS_DIR.exists():
