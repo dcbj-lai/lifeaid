@@ -51,6 +51,24 @@ Open `http://127.0.0.1:8002`.
 
 Use one host consistently during local SAML testing. If LifeOS is opened at `127.0.0.1`, keep this app on `127.0.0.1`; do not switch part of the flow to `localhost`.
 
+## AWS Persistence
+
+The boilerplate starts as a mostly stateless tenant app: authentication creates a signed app session cookie, and the placeholder modules do not require a database.
+
+When a real tenant product needs persistence, follow the LifeOS deployment pattern:
+
+- Use PostgreSQL for local development, usually through Docker Compose.
+- Use Amazon RDS for PostgreSQL on AWS.
+- Store the production `DATABASE_URL` in AWS Secrets Manager or SSM Parameter Store.
+- Inject `DATABASE_URL` into the ECS task definition as a secret.
+- Keep tenant product data inside the tenant app database. LifeOS remains the suite gate for tenant membership, app access, and SAML.
+
+Example SQLAlchemy URL shape:
+
+```text
+DATABASE_URL=postgresql+psycopg://USER:PASSWORD@RDS_ENDPOINT:5432/tenant_app
+```
+
 ## LifeOS Registration
 
 See [docs/LIFEOS_SAML_SETUP.md](docs/LIFEOS_SAML_SETUP.md).
@@ -83,3 +101,4 @@ When adapting this boilerplate for a real LifeOS product:
 5. Smoke-test IdP-initiated SSO from LifeOS and SP-initiated SSO from the app login screen.
 6. Confirm app logout clears the app session and sends LifeOS SSO users back through the LifeOS logout/SLO sequence.
 7. For staging and production, use environment-specific public URLs and entity IDs. Do not hardcode local ports into source.
+8. If the app stores product data, add PostgreSQL locally and use RDS PostgreSQL on AWS with `DATABASE_URL` injected from Secrets Manager or SSM.
