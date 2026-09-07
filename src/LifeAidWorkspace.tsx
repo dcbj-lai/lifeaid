@@ -139,7 +139,7 @@ export default function LifeAidWorkspace({
           }}
         >
           <img
-            src="/brand/life-college-sidebar.png"
+            src={`${import.meta.env.BASE_URL}brand/life-college-sidebar.png`}
             alt="Life College International"
           />
           <span>
@@ -177,8 +177,8 @@ export default function LifeAidWorkspace({
           ))}
         <div className="la-sidebar-bottom">
           <div className="la-system-links">
-            {can("settings.saml.view") && <a href="/saml-setup">SAML setup</a>}
-            <button onClick={onLogout}>Sign out</button>
+            {import.meta.env.MODE !== "pages" && can("settings.saml.view") && <a href="/saml-setup">SAML setup</a>}
+            <button onClick={onLogout}>{import.meta.env.MODE === "pages" ? "Reset demo" : "Sign out"}</button>
           </div>
           <div className="la-suite">
             <Layers3 size={19} />

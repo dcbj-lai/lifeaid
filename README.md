@@ -118,3 +118,9 @@ When adapting this boilerplate for a real LifeOS product:
 ## LifeAid palette
 
 The interface uses Life College Khaki (`#CC9A71`) and Sand (`#E2CFB3`) from page 22 of the supplied 2026 brand guide, supported by Life Ivory (`#F2E8DC`), white, and dark neutral text. Dark mode uses warm neutral surfaces and sand text accents. Primary buttons use Life Crimson (`#9E1D20`) with Life Maroon (`#690F0D`) hover states. Existing logo artwork retains its original colors. Crimson Pro remains the heading typeface.
+
+## Shared GitHub Pages mockup
+
+The `Deploy LifeAid mockup` workflow builds and deploys `main` to GitHub Pages. Enable Pages with GitHub Actions as the publishing source. The preview URL is https://dcbj-lai.github.io/lifeaid/.
+
+`pnpm build:pages` creates a static preview at the `/lifeaid/` base path, bypasses server sign-in, and hides SAML setup. Demo user switching and Reset demo operate only on fictional in-memory records. Every browser has an independent session; refreshing discards changes. GitHub Pages does not enforce LifeAid authentication or backend RBAC. The Docker build retains the original authentication flow.

@@ -9,7 +9,8 @@
     "api": "uvicorn lifeos_tenant_boilerplate.main:app --app-dir api --host 127.0.0.1 --port 8002 --reload",
     "build": "tsc -b && node node_modules/vite/bin/vite.js build",
     "preview": "node node_modules/vite/bin/vite.js preview --host 127.0.0.1 --port 4175",
-    "test:rbac": "tsc src/rbac/model.ts --target ES2022 --module commonjs --outDir /tmp/lifeaid-rbac-test --skipLibCheck && node --test tests/rbac.test.cjs"
+    "test:rbac": "tsc src/rbac/model.ts --target ES2022 --module commonjs --outDir /tmp/lifeaid-rbac-test --skipLibCheck && node --test tests/rbac.test.cjs",
+    "build:pages": "tsc -b && node node_modules/vite/bin/vite.js build --mode pages"
   },
   "dependencies": {
     "lucide-react": "0.468.0",
