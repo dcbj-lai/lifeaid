@@ -26,7 +26,7 @@ Tenant app Vite: http://127.0.0.1:5175
 
 ## Register In LifeOS
 
-Start LifeOS, sign in as a suite admin, then open:
+First confirm the existing Life College tenant ID and LifeOS URL. `life-college` below is provisional. Add LifeAid to the existing tenant if one is already registered; do not create a duplicate college tenant. For a new tenant, sign in as a suite admin and open:
 
 ```text
 Settings -> Register Tenant
@@ -35,27 +35,27 @@ Settings -> Register Tenant
 For the boilerplate, use:
 
 ```text
-Tenant ID: tenant-boilerplate
-Tenant Name: Tenant Boilerplate
-Organization Name: LifeOS Tenant
-First App ID: tenant-boilerplate
-First App Name: Tenant Boilerplate
+Tenant ID: life-college
+Tenant Name: Life College
+Organization Name: Life College
+First App ID: lifeaid
+First App Name: LifeAid
 Launch URL: http://127.0.0.1:8002
-Required Entitlement: tenant-boilerplate
+Required Entitlement: lifeaid
 ```
 
 Then open:
 
 ```text
-Settings -> SAML Apps -> Tenant Boilerplate
+Settings -> SAML Apps -> LifeAid
 ```
 
 Configure:
 
 ```text
 Enabled: yes
-SP Entity ID: urn:lifeos:tenant-boilerplate:sp
-Audience: urn:lifeos:tenant-boilerplate:sp
+SP Entity ID: urn:lifeos:lifeaid:sp
+Audience: urn:lifeos:lifeaid:sp
 ACS URL: http://127.0.0.1:8002/saml/acs
 SLO URL: http://127.0.0.1:8002/saml/slo
 NameID format: urn:oasis:names:tc:SAML:2.0:nameid-format:persistent
@@ -86,10 +86,10 @@ Set these values for local Docker:
 APP_PUBLIC_URL=http://127.0.0.1:8002
 FRONTEND_URL=http://127.0.0.1:8002
 LIFEOS_PUBLIC_URL=http://127.0.0.1:5174
-LIFEOS_TENANT_ID=tenant-boilerplate
-LIFEOS_APP_ID=tenant-boilerplate
-LIFEOS_IDP_ENTITY_ID=http://127.0.0.1:5174/saml/idp/tenant-boilerplate
-SAML_SP_ENTITY_ID=urn:lifeos:tenant-boilerplate:sp
+LIFEOS_TENANT_ID=life-college
+LIFEOS_APP_ID=lifeaid
+LIFEOS_IDP_ENTITY_ID=http://127.0.0.1:5174/saml/idp/life-college
+SAML_SP_ENTITY_ID=urn:lifeos:lifeaid:sp
 SAML_REQUIRE_SIGNED_RESPONSE=true
 ```
 
@@ -121,7 +121,7 @@ Logout should clear the app session. If the current session came from LifeOS SSO
 5. Open the IdP-initiated URL:
 
    ```text
-   http://127.0.0.1:5174/saml/sso?tenant_id=tenant-boilerplate&app_id=tenant-boilerplate
+   http://127.0.0.1:5174/saml/sso?tenant_id=life-college&app_id=lifeaid
    ```
 
 6. Confirm the browser lands inside the tenant app with a LifeOS-backed app session.

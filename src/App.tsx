@@ -1,3 +1,5 @@
+import './styles.css';
+import LifeAidWorkspace from './LifeAidWorkspace';
 import {
   Bell,
   ChartColumnIncreasing,
@@ -80,17 +82,17 @@ const icons = {
 };
 
 const fallbackBranding: Branding = {
-  appName: 'Tenant Boilerplate',
-  brandName: 'Tenant App',
-  organization: 'LifeOS Tenant',
-  accent: '#9e1d20',
+  appName: 'LifeAid',
+  brandName: 'LifeAid',
+  organization: 'Life College',
+  accent: '#cc9a71',
   lifeosUrl: 'http://127.0.0.1:5174',
-  tenantId: 'tenant-boilerplate',
-  appId: 'tenant-boilerplate',
-  spEntityId: 'urn:lifeos:tenant-boilerplate:sp',
+  tenantId: 'life-college',
+  appId: 'lifeaid',
+  spEntityId: 'urn:lifeos:lifeaid:sp',
   acsUrl: 'http://127.0.0.1:8002/saml/acs',
   sloUrl: 'http://127.0.0.1:8002/saml/slo',
-  idpMetadataUrl: 'http://127.0.0.1:5174/saml/idp/metadata?tenant_id=tenant-boilerplate',
+  idpMetadataUrl: 'http://127.0.0.1:5174/saml/idp/metadata?tenant_id=life-college',
 };
 
 const signedOutSession: AppSession = {
@@ -205,6 +207,10 @@ export default function App() {
     );
   }
 
+  if (!['/saml-setup', '/settings'].includes(activePath)) {
+    return <LifeAidWorkspace onLogout={handleLogout} />;
+  }
+
   return (
     <div className={`app shell ${darkMode ? 'dark' : ''}`} style={{ '--brand-accent': branding.accent } as CSSProperties}>
       <Sidebar branding={branding} navigation={navigation} activePath={activePath} onNavigate={navigate} />
@@ -315,7 +321,7 @@ function BrandLockup({ branding, compact = false }: { branding: Branding; compac
   return (
     <div className="brand-lockup">
       <span className="brand-mark">
-        <img src="/lifeos-platform-crest.svg" alt="" />
+        <img src="/brand/life-college-sidebar.png" alt="Life College International" />
       </span>
       <span>
         <strong>{branding.brandName}</strong>
@@ -338,7 +344,7 @@ function LoginScreen({
   onPasswordLogin: (credentials: { email: string; password: string; remember: boolean }) => Promise<void>;
   onDevLogin: () => void;
 }) {
-  const [email, setEmail] = useState('admin@tenant.local');
+  const [email, setEmail] = useState('admin@lifeaid.local');
   const [password, setPassword] = useState('password');
   const [remember, setRemember] = useState(true);
   const [error, setError] = useState(() => new URLSearchParams(window.location.search).get('sso_error') ?? '');
@@ -368,7 +374,7 @@ function LoginScreen({
           </button>
         </div>
         <div className="login-copy">
-          <span className="eyebrow">Tenant application</span>
+          <span className="eyebrow">Financial Aid Module</span>
           <h1>{branding.appName}</h1>
           <p>Sign in to continue.</p>
         </div>
@@ -414,9 +420,9 @@ function DashboardView({ branding, session, dashboard }: { branding: Branding; s
     <div className="dashboard-grid">
       <section className="report-hero">
         <div>
-          <span className="eyebrow">Tenant starter</span>
+          <span className="eyebrow">LifeAid starter</span>
           <h2>{branding.brandName}</h2>
-          <p>This is a clone-ready LifeOS tenant shell. Replace the sample metrics, placeholder routes, and API handlers with the tenant product surface.</p>
+          <p>Financial aid for Life College, connected to LifeOS. This starter contains sample metrics and placeholder modules while we define the financial-aid workflows.</p>
         </div>
         <div className="report-status">
           <span>Signed in as</span>

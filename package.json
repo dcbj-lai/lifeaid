@@ -1,5 +1,5 @@
 {
-  "name": "lifeos-tenant-boilerplate",
+  "name": "lifeaid",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -8,7 +8,8 @@
     "dev": "node node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5175",
     "api": "uvicorn lifeos_tenant_boilerplate.main:app --app-dir api --host 127.0.0.1 --port 8002 --reload",
     "build": "tsc -b && node node_modules/vite/bin/vite.js build",
-    "preview": "node node_modules/vite/bin/vite.js preview --host 127.0.0.1 --port 4175"
+    "preview": "node node_modules/vite/bin/vite.js preview --host 127.0.0.1 --port 4175",
+    "test:rbac": "tsc src/rbac/model.ts --target ES2022 --module commonjs --outDir /tmp/lifeaid-rbac-test --skipLibCheck && node --test tests/rbac.test.cjs"
   },
   "dependencies": {
     "lucide-react": "0.468.0",
@@ -23,4 +24,3 @@
     "vite": "7.0.7"
   }
 }
-

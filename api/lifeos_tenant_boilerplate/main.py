@@ -29,7 +29,7 @@ ROOT = Path(__file__).resolve().parents[2]
 DIST_DIR = ROOT / "dist"
 DOCS_DIR = ROOT / "docs"
 
-app = FastAPI(title="LifeOS Tenant Boilerplate API", version="0.1.0")
+app = FastAPI(title="LifeAid API", version="0.1.0")
 settings = get_settings()
 
 
@@ -274,10 +274,29 @@ if (DIST_DIR / "assets").exists():
     app.mount("/assets", StaticFiles(directory=DIST_DIR / "assets"), name="frontend-assets")
 
 
+if (DIST_DIR / "brand").exists():
+    app.mount("/brand", StaticFiles(directory=DIST_DIR / "brand"), name="brand-assets")
+
+
+@app.get("/lifeos-platform-crest.svg")
+def brand_crest() -> FileResponse:
+    return FileResponse(DIST_DIR / "lifeos-platform-crest.svg", media_type="image/svg+xml")
+
+
+@app.get("/favicon.ico")
+@app.get("/favicon-32x32.png")
+@app.get("/favicon-16x16.png")
+@app.get("/apple-touch-icon.png")
+def favicon(request: Request) -> FileResponse:
+    filename = request.url.path.rsplit("/", 1)[-1]
+    media_type = "image/x-icon" if filename.endswith(".ico") else "image/png"
+    return FileResponse(DIST_DIR / filename, media_type=media_type)
+
+
 @app.get("/{path:path}")
 def frontend(path: str) -> Response:
     del path
     index = DIST_DIR / "index.html"
     if index.exists():
         return FileResponse(index)
-    return JSONResponse({"message": "LifeOS Tenant Boilerplate API is running. Start Vite or build the frontend."})
+    return JSONResponse({"message": "LifeAid API is running. Start Vite or build the frontend."})

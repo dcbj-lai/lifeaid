@@ -7,7 +7,7 @@ from itsdangerous import BadSignature, URLSafeTimedSerializer
 
 from .config import get_settings
 
-COOKIE_NAME = "lifeos_tenant_session"
+COOKIE_NAME = "lifeaid_session"
 SESSION_MAX_AGE_SECONDS = 8 * 60 * 60
 REMEMBERED_SESSION_MAX_AGE_SECONDS = 14 * 24 * 60 * 60
 

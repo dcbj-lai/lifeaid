@@ -8,7 +8,8 @@ RUN corepack enable && corepack prepare pnpm@11.9.0 --activate && pnpm install -
 COPY index.html vite.config.ts ./
 COPY public ./public
 COPY src ./src
-RUN pnpm build
+COPY tests ./tests
+RUN pnpm test:rbac && pnpm build
 
 FROM python:3.12-slim AS runtime
 

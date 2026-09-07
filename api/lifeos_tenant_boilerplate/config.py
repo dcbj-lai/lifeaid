@@ -8,29 +8,29 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     app_env: str = "local"
-    app_name: str = "Tenant Boilerplate"
+    app_name: str = "LifeAid"
     app_public_url: str = "http://127.0.0.1:8002"
     frontend_url: str = ""
     session_secret: str = "lifeos-tenant-boilerplate-local-secret"
 
     lifeos_public_url: str = "http://127.0.0.1:5174"
-    lifeos_tenant_id: str = "tenant-boilerplate"
-    lifeos_app_id: str = "tenant-boilerplate"
+    lifeos_tenant_id: str = "life-college"
+    lifeos_app_id: str = "lifeaid"
     lifeos_idp_entity_id: str = ""
     lifeos_idp_certificate: str = ""
 
-    saml_sp_entity_id: str = "urn:lifeos:tenant-boilerplate:sp"
+    saml_sp_entity_id: str = "urn:lifeos:lifeaid:sp"
     saml_require_signed_response: bool = True
     saml_clock_skew_seconds: int = 120
 
-    app_auth_email: str = "admin@tenant.local"
+    app_auth_email: str = "admin@lifeaid.local"
     app_auth_password: str = "password"
-    app_auth_name: str = "Tenant Admin"
+    app_auth_name: str = "LifeAid Admin"
     app_auth_roles: str = "tenant-admin"
 
-    brand_name: str = "Tenant App"
-    brand_organization: str = "LifeOS Tenant"
-    brand_accent: str = "#9e1d20"
+    brand_name: str = "LifeAid"
+    brand_organization: str = "Life College"
+    brand_accent: str = "#cc9a71"
 
     @property
     def public_url(self) -> str:

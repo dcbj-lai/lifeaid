@@ -1,6 +1,6 @@
-# LifeOS Tenant Boilerplate
+# LifeAid — Life College Financial Aid
 
-Clone-ready starter for a LifeOS tenant application. It uses the same broad stack as LifeOS: React/Vite on the frontend and Python/FastAPI on the backend.
+LifeAid starts from the [LifeOS tenant boilerplate](https://github.com/dcbj-lai/lifeos-tenant-boilerplate) at commit `08d0069e24bd1fb1454595ee7f6c9171fa883cb4`. The financial-aid and Student Work Program frontend now includes interactive React workflows with hardcoded sample data, including degree-linked scholarship cartridges, awards, and renewals. Business backend implementation is deferred. See [Frontend preview](docs/FRONTEND_PREVIEW.md) for architecture and walkthrough. It uses the same broad stack as LifeOS: React/Vite on the frontend and Python/FastAPI on the backend.
 
 LifeOS owns suite authentication, tenant membership, app entitlements, and app launcher visibility. A tenant app owns its own session, product roles, permissions, and data after LifeOS admits the user through SAML.
 
@@ -32,22 +32,34 @@ pip install -r requirements.txt
 pnpm api
 ```
 
-Open `http://127.0.0.1:5175`.
+Open `http://127.0.0.1:5175`. For this Vite workflow, set `FRONTEND_URL=http://127.0.0.1:5175` in `.env`.
 
 Default local password login:
 
 ```text
-admin@tenant.local / password
+admin@lifeaid.local / password
 ```
 
 ## Docker
 
 ```bash
 cp .env.example .env
-docker compose up --build
+docker compose up -d --build
 ```
 
-Open `http://127.0.0.1:8002`.
+Open `http://127.0.0.1:8002`. Docker serves both the React build and FastAPI on this address.
+
+After copying `.env.example`, replace `SESSION_SECRET` with a unique random value. The initial local setup already has a generated secret in the ignored `.env` file. The documented password is for local development.
+
+```bash
+docker compose ps
+docker compose logs --tail=100 app
+docker compose stop
+```
+
+The Docker project is `lifeaid`, and its session cookie is `lifeaid_session` to avoid collisions with other tenant apps on the same host. Compose passes all `.env` settings, including branding, session secret, and SAML certificate, to the container.
+
+`life-college` is a provisional tenant ID; confirm the existing Life College tenant ID before registering LifeAid. The LifeOS URL is still the boilerplate default (`http://127.0.0.1:5174`). SSO registration and end-to-end integration have not been completed.
 
 Use one host consistently during local SAML testing. If LifeOS is opened at `127.0.0.1`, keep this app on `127.0.0.1`; do not switch part of the flow to `localhost`.
 
@@ -78,11 +90,11 @@ After signing in, open `SAML Setup` in the tenant navigation to view the same re
 At minimum, configure this app in LifeOS with:
 
 ```text
-Tenant ID: tenant-boilerplate
-App ID: tenant-boilerplate
+Tenant ID: life-college
+App ID: lifeaid
 Launch URL: http://127.0.0.1:8002
-Required entitlement: tenant-boilerplate
-SP Entity ID: urn:lifeos:tenant-boilerplate:sp
+Required entitlement: lifeaid
+SP Entity ID: urn:lifeos:lifeaid:sp
 ACS URL: http://127.0.0.1:8002/saml/acs
 SLO URL: http://127.0.0.1:8002/saml/slo
 NameID format: urn:oasis:names:tc:SAML:2.0:nameid-format:persistent
@@ -102,3 +114,7 @@ When adapting this boilerplate for a real LifeOS product:
 6. Confirm app logout clears the app session and sends LifeOS SSO users back through the LifeOS logout/SLO sequence.
 7. For staging and production, use environment-specific public URLs and entity IDs. Do not hardcode local ports into source.
 8. If the app stores product data, add PostgreSQL locally and use RDS PostgreSQL on AWS with `DATABASE_URL` injected from Secrets Manager or SSM.
+
+## LifeAid palette
+
+The interface uses Life College Khaki (`#CC9A71`) and Sand (`#E2CFB3`) from page 22 of the supplied 2026 brand guide, supported by Life Ivory (`#F2E8DC`), white, and dark neutral text. Dark mode uses warm neutral surfaces and sand text accents. Primary buttons use Life Crimson (`#9E1D20`) with Life Maroon (`#690F0D`) hover states. Existing logo artwork retains its original colors. Crimson Pro remains the heading typeface.
